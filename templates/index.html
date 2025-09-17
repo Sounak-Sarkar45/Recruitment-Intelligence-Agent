@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JD-Resume Matcher</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h2>Upload Job Description & Resume</h2>
+    <form action="/match" method="post" enctype="multipart/form-data">
+        <label for="jd">Job Description:</label><br>
+        <textarea name="job_description" rows="10" cols="60" required></textarea><br><br>
+        
+        <label for="resume">Upload Resume (PDF):</label><br>
+        <input type="file" name="resume" accept=".pdf" required><br><br>
+        
+        <button type="submit">Match</button>
+    </form>
+</body>
+</html>

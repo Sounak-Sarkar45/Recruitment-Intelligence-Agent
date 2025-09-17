@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Match Result</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="result">
+        <h2>Resume Match Result</h2>
+        <p><strong>Similarity Score:</strong> {{ result.similarity_score }}%</p>
+        <p><strong>Rating:</strong> 
+            <span class="rating {{ result.rating|lower|replace(' ', '-') }}">{{ result.rating }}</span>
+        </p>
+
+        <h3>Candidate Feedback Report</h3>
+        <div class="comments">
+            {{ result.comments_html | safe }}
+        </div>
+
+        <h3>Attribute Scores</h3>
+        <table class="scores-table">
+            <thead>
+                <tr>
+                    <th>Attribute</th>
+                    <th>Total Weight</th>
+                    <th>Score</th>
+                    <th>Contribution</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set weights = {
+                    "Skills Match": 35,
+                    "Experience Match": 25,
+                    "Location Match": 15,
+                    "Notice Period Match": 10,
+                    "Other Requirements Match": 15
+                } %}
+                {% for key, value in result.attribute_scores.items() %}
+                <tr>
+                    <td>{{ key }}</td>
+                    <td>{{ weights.get(key, 0) }}%</td>
+                    <td>{{ value }}%</td>
+                    <td>{{ "%.2f"|format(value * weights.get(key, 0) / 100) }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Total</th>
+                    <th>100%</th>
+                    <th></th>
+                    <th>{{ result.similarity_score }}%</th>
+                </tr>
+            </tfoot>
+        </table>
+
+        {% if result.other_breakdown %}
+        <h4>Other Requirements Breakdown</h4>
+        <table class="scores-table">
+            <thead>
+                <tr>
+                    <th>Category</th>
+                    <th>Max Contribution</th>
+                    <th>Score</th>
+                    <th>Contribution</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% set sub_max = {"Degrees": 3.75, "Courses": 3.75, "Interpersonal Skills": 3.75, "Awards": 3.75} %}
+                {% for sub, sc in result.other_breakdown.items() %}
+                <tr>
+                    <td>{{ sub }}</td>
+                    <td>{{ sub_max[sub] }}%</td>
+                    <td>{{ sc }}%</td>
+                    <td>{{ "%.2f"|format(sc * 0.15) }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+        <br><a href="/">← Go Back</a>
+    </div>
+</body>
+</html>
